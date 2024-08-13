@@ -120,6 +120,3 @@ jobs:
           fi
 
           echo "API Response: $RESPONSE"
-```
-
-This should maintain proper indentation for your YAML code.
