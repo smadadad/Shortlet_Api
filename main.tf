@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("my-terraform-config/")
+  credentials = jsondecode(var.gcp_credentials)
   project     = "time-api-1"
   region      = "us-central1"
 }
@@ -94,7 +94,7 @@ resource "kubernetes_namespace" "example" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.example.metadata.name
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -118,9 +118,6 @@ resource "kubernetes_deployment" "timeapi_deployment" {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
 
-          ports {
-            container_port = 8080
-          }
         }
       }
     }
@@ -131,7 +128,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 resource "kubernetes_service" "my_api_service" {
   metadata {
     name      = "my-api-service"
-    namespace = kubernetes_namespace.example.metadata.name
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -150,10 +147,7 @@ resource "kubernetes_service" "my_api_service" {
 resource "kubernetes_ingress" "timeapi_ingress" {
   metadata {
     name      = "timeapi_ingress"
-    namespace = kubernetes_namespace.example.metadata.name
-    annotations = {
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-    }
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -161,32 +155,12 @@ resource "kubernetes_ingress" "timeapi_ingress" {
       http {
         path {
           path = "/time"
-          path_type = "prefix"
           backend {
-            service_name = kubernetes_service.my_api_service.metadata.name
+            service_name = kubernetes_service.my_api_service.metadata[0].name
             service_port = 80
           }
         }
       }
     }
-
-    tls {
-      secret_name = "timeapi-tls"
-    }
   }
-}
-
-# Kubernetes TLS Secret 
-resource "kubernetes_secret" "my_api_tls_secret" {
-  metadata {
-    name      = "timeapi-tls"
-    namespace = kubernetes_namespace.example.metadata.name
-  }
-
-  data = {
-    tls.crt = filebase64("${path.module}/certs/tls.crt")
-    tls.key = filebase64("${path.module}/certs/tls.key")
-  }
-
-  type = "kubernetes.io/tls"
 }
