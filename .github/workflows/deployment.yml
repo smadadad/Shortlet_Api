@@ -1,4 +1,4 @@
-name: Build and Deploy to GKE
+name: Provision, Build and Deploy to GKE
 
 on:
   push:
@@ -15,41 +15,59 @@ env:
   GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }} # GCP credentials stored in GitHub Secrets
 
 jobs:
-
-  setup:
+  terraform:
     runs-on: ubuntu-latest
     environment: production
 
+    
     permissions:
       contents: 'read'
       id-token: 'write'
+      
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout
+      #chechout the repo
+      - name: checkout code
         uses: actions/checkout@v4
-    
-      # Step 2: Authentication via credentials JSON
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+
+      #set up terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          terraform_version: 1.4.0
+  
     
-      # Step 3: Docker configuration
-      - name: Docker configuration
-        run: |-
-          gcloud auth configure-docker $GAR_LOCATION-docker.pkg.dev --quiet
-          
-      # Step 4: Set up GKE credentials
-      - name: Set up GKE credentials
-        uses: google-github-actions/get-gke-credentials@v2
+      # Authentication via credentials JSON
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
         with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      # Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Validate Terraform configuration
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Plan Terraform changes
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Apply Terraform changes
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+    
+
 
   build:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: terraform
     steps:
+    
+      #chechout the repo
+      - name: checkout code
+        uses: actions/checkout@v4    
+        
       # Step 1: Build the Docker image
       - name: Build Docker image
         run: |-
