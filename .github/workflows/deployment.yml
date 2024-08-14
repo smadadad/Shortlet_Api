@@ -30,7 +30,7 @@ jobs:
     
       # Step 2: Authentication via credentials JSON
       - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
     
