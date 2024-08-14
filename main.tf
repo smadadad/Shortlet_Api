@@ -106,7 +106,7 @@ resource "kubernetes_namespace" "example" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.example.metadata.name
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -139,7 +139,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 resource "kubernetes_service" "my_api_service" {
   metadata {
     name      = "my-api-service"
-    namespace = kubernetes_namespace.example.metadata.name
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -158,7 +158,7 @@ resource "kubernetes_service" "my_api_service" {
 resource "kubernetes_ingress" "timeapi_ingress" {
   metadata {
     name      = "timeapi_ingress"
-    namespace = kubernetes_namespace.example.metadata.name
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -167,7 +167,7 @@ resource "kubernetes_ingress" "timeapi_ingress" {
         path {
           path = "/time"
           backend {
-            service_name = kubernetes_service.my_api_service.metadata.name
+            service_name = kubernetes_service.my_api_service.metadata[0].name
             service_port = 80
           }
         }
