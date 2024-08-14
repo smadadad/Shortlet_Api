@@ -1,17 +1,21 @@
-provider "google" {
-  credentials = jsondecode(var.gcp_credentials)
-  project     = "time-api-1"
-  region      = "us-central1"
-}
-
+# Variables for GCP credentials and project ID
 variable "gcp_credentials" {
   description = "The JSON credentials for GCP"
   type        = string
 }
+
 variable "project_id" {
   description = "The GCP Project ID"
   type        = string
 }
+
+# Google Provider Configuration
+provider "google" {
+  credentials = jsondecode(var.gcp_credentials)
+  project     = var.project_id
+  region      = "us-central1"
+}
+
 # Google Kubernetes Engine (GKE) cluster
 resource "google_container_cluster" "timeapi_cluster" {
   name     = "timeapi-cluster"
@@ -33,19 +37,19 @@ resource "google_service_account" "gke_service_account" {
 
 # Assign IAM roles to the service account
 resource "google_project_iam_member" "gke_cluster_admin" {
-  project = "time-api-1"
+  project = var.project_id
   role    = "roles/container.clusterAdmin"
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
 resource "google_project_iam_member" "gke_compute_admin" {
-  project = "time-api-1"
+  project = var.project_id
   role    = "roles/compute.admin"
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
 resource "google_project_iam_member" "gke_iam_service_account_user" {
-  project = "time-api-1"
+  project = var.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
@@ -102,7 +106,7 @@ resource "kubernetes_namespace" "example" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.example.metadata.name
   }
 
   spec {
@@ -125,7 +129,6 @@ resource "kubernetes_deployment" "timeapi_deployment" {
         container {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
-
         }
       }
     }
@@ -136,7 +139,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 resource "kubernetes_service" "my_api_service" {
   metadata {
     name      = "my-api-service"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.example.metadata.name
   }
 
   spec {
@@ -155,7 +158,7 @@ resource "kubernetes_service" "my_api_service" {
 resource "kubernetes_ingress" "timeapi_ingress" {
   metadata {
     name      = "timeapi_ingress"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.example.metadata.name
   }
 
   spec {
@@ -164,7 +167,7 @@ resource "kubernetes_ingress" "timeapi_ingress" {
         path {
           path = "/time"
           backend {
-            service_name = kubernetes_service.my_api_service.metadata[0].name
+            service_name = kubernetes_service.my_api_service.metadata.name
             service_port = 80
           }
         }
