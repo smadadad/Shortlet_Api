@@ -4,6 +4,14 @@ provider "google" {
   region      = "us-central1"
 }
 
+variable "gcp_credentials" {
+  description = "The JSON credentials for GCP"
+  type        = string
+}
+variable "project_id" {
+  description = "The GCP Project ID"
+  type        = string
+
 # Google Kubernetes Engine (GKE) cluster
 resource "google_container_cluster" "timeapi_cluster" {
   name     = "timeapi-cluster"
