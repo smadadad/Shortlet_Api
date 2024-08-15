@@ -16,6 +16,13 @@ provider "google" {
   region      = "us-central1"
 }
 
+# Create a service account for GKE
+resource "google_service_account" "gke_service_account" {
+  account_id   = "gke-cluster-sa"
+  display_name = "GKE Cluster Service Account"
+}
+
+
 # Google Kubernetes Engine (GKE) cluster
 resource "google_container_cluster" "timeapi_cluster" {
   name     = "timeapi-cluster"
@@ -29,11 +36,6 @@ resource "google_container_cluster" "timeapi_cluster" {
   }
 }
 
-# Create a service account for GKE
-resource "google_service_account" "gke_service_account" {
-  account_id   = "gke-cluster-sa"
-  display_name = "GKE Cluster Service Account"
-}
 
 # Assign IAM roles to the service account
 resource "google_project_iam_member" "gke_cluster_admin" {
