@@ -53,8 +53,8 @@ resource "google_compute_network" "vpc_network" {
 }
 
 # Create a Subnetwork
-resource "google_compute_subnetwork" "timeapisubnet_main" {
-  name          = "timeapisubnet-main"
+resource "google_compute_subnetwork" "timeapisubnet" {
+  name          = "timeapisubnet"
   network       = google_compute_network.vpc_network.id
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
