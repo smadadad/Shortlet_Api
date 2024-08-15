@@ -47,7 +47,8 @@ jobs:
 
       # Step 6: Plan Terraform changes
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -input=false
+        
 
       # Step 7: Apply Terraform changes
       - name: Terraform Apply
