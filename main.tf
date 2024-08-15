@@ -19,11 +19,10 @@ resource "google_container_cluster" "timeapi_cluster" {
   location = "us-central1"
 
   initial_node_count = 1
-  remove_default_node_pool = true
   node_config {
     machine_type = "e2-medium"
 
-    disk_size_gb = 10 # This will set to 10 instead of 100
+    disk_size_gb = 75 # This will set to 10 instead of 100
     service_account = google_service_account.gke_service_account.email
   }
 }
