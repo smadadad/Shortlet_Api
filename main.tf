@@ -1,7 +1,7 @@
 
 # Google Provider Configuration
 provider "google" {
-  credentials = jsondecode(var.gcp_credentials)
+  credentials = var.gcp_credentials
   project     = var.project_id
   region      = "us-central1"
 }
@@ -147,9 +147,9 @@ resource "kubernetes_service" "my_api_service" {
 }
 
 # Kubernetes Ingress
-resource "kubernetes_ingress" "timeapi_ingress" {
+resource "kubernetes_ingress" "timeapi-ingress" {
   metadata {
-    name      = "timeapi_ingress"
+    name      = "timeapi-ingress"
     namespace = kubernetes_namespace.example.metadata[0].name
   }
 
