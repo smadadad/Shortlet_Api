@@ -14,8 +14,8 @@ resource "google_service_account" "gke_service_account" {
 
 
 # Google Kubernetes Engine (GKE) cluster
-resource "google_container_cluster" "timeapi_cluster" {
-  name     = "timeapi-cluster"
+resource "google_container_cluster" "timeapi_cluster1" {
+  name     = "timeapi-cluster1"
   location = "us-central1"
 
   initial_node_count = 1
@@ -48,14 +48,14 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
 }
 
 # Create a VPC
-resource "google_compute_network" "vpc_network2" {
-  name = "vpc-network2"
+resource "google_compute_network" "vpc_network3" {
+  name = "vpc-network3"
 }
 
 # Create a Subnetwork
 resource "google_compute_subnetwork" "timeapisubnet" {
   name          = "timeapisubnet"
-  network       = google_compute_network.vpc_network2.id
+  network       = google_compute_network.vpc_network3.id
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
 }
@@ -63,7 +63,7 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 # Create a Firewall Rule to allow internal/secure communication
 resource "google_compute_firewall" "allow-internal" {
   name    = "allow-internal"
-  network = google_compute_network.vpc_network2.name
+  network = google_compute_network.vpc_network3.name
 
   allow {
     protocol = "tcp"
