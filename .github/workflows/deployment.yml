@@ -47,7 +47,7 @@ jobs:
 
       # Step 6: Plan Terraform changes
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan -input=false -var="project_id=$PROJECT_ID" -var="gcp_credentials=$GCP_CREDENTIALS"
         
 
       # Step 7: Apply Terraform changes
