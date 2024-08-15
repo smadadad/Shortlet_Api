@@ -91,7 +91,7 @@ resource "google_compute_router_nat" "nat_gateway" {
 # Kubernetes Namespace
 resource "kubernetes_namespace" "k_namespace" {
   metadata {
-    name = "k-namespace"
+    name = "knamespace"
   }
 }
 
