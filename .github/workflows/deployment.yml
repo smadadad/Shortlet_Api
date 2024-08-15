@@ -47,7 +47,7 @@ jobs:
 
       # Step 6: Plan Terraform changes
       - name: Terraform Plan
-        run: terraform plan -input=false -var="project_id=${{ secrets.GKE_PROJECT }}" -var="gcp_credentials=${{ secrets.GCP_CREDENTIALS }}"
+        run: terraform plan -input=false
         
 
       # Step 7: Apply Terraform changes
