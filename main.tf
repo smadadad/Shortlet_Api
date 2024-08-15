@@ -76,7 +76,7 @@ resource "google_compute_firewall" "allow-internal" {
 # Create NAT Gateway
 resource "google_compute_router" "nat_router" {
   name    = "nat-router"
-  network = google_compute_network.vpc_network2.id
+  network = google_compute_network.vpc_network3.id
   region  = "us-central1"
 }
 
@@ -89,9 +89,9 @@ resource "google_compute_router_nat" "nat_gateway" {
 }
 
 # Kubernetes Namespace
-resource "kubernetes_namespace" "example" {
+resource "kubernetes_namespace" "k_namespace" {
   metadata {
-    name = "example-namespace"
+    name = "k-namespace"
   }
 }
 
