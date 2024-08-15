@@ -49,7 +49,7 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
 
 # Create a VPC
 resource "google_compute_network" "vpc_network" {
-  name = "vpc-network"
+  name = "vpc-network2"
 }
 
 # Create a Subnetwork
