@@ -99,7 +99,7 @@ resource "kubernetes_namespace" "k_namespace" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.knamespace.metadata[0].name
   }
 
   spec {
@@ -132,7 +132,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 resource "kubernetes_service" "my_api_service" {
   metadata {
     name      = "my-api-service"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.knamespace.metadata[0].name
   }
 
   spec {
@@ -151,7 +151,7 @@ resource "kubernetes_service" "my_api_service" {
 resource "kubernetes_ingress" "timeapi-ingress" {
   metadata {
     name      = "timeapi-ingress"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    namespace = kubernetes_namespace.knamespace.metadata[0].name
   }
 
   spec {
