@@ -31,7 +31,7 @@ resource "google_container_cluster" "timeapi_cluster" {
 # resource "google_project_iam_member" "gke_cluster_admin" {
 #  project = var.project_id
 #  role    = "roles/container.clusterAdmin"
-#  member  = "serviceAccount:${google_service_account.gke_service_account.email}"
+##  member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 #}
 
 #resource "google_project_iam_member" "gke_compute_admin" {
