@@ -1,13 +1,3 @@
-# Variables for GCP credentials and project ID
-variable "gcp_credentials" {
-  description = "The JSON credentials for GCP"
-  type        = string
-}
-
-variable "project_id" {
-  description = "The GCP Project ID"
-  type        = string
-}
 
 # Google Provider Configuration
 provider "google" {
