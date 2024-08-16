@@ -82,7 +82,7 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 # Create a Firewall Rule 
 resource "google_compute_firewall" "allow-internal" {
   name    = "allow-internal"
-  network = google_compute_network.vpc_network[0].id
+  network = google_compute_network.vpc_network.name
 
   allow {
     protocol = "tcp"
@@ -92,26 +92,18 @@ resource "google_compute_firewall" "allow-internal" {
   source_ranges = ["10.0.0.0/16"]
 }
 
-# Check if the NAT Router already exists
-data "google_compute_router" "existing_nat_router" {
-  name    = "nat-router"
-  region  = "us-central1"
-  project = var.project_id
-  network = google_compute_network.vpc_network[0].name
-}
 
 # Create a NAT Router only if it doesn't exist
 resource "google_compute_router" "nat_router" {
-  count   = length(data.google_compute_router.existing_nat_router.id) == 0 ? 1 : 0
   name    = "nat-router"
-  network = google_compute_network.vpc_network[0].id
+  network = google_compute_network.vpc_network.name
   region  = "us-central1"
 }
 
 # Check if the NAT Gateway already exists
 data "google_compute_router_nat" "existing_nat_gateway" {
   name   = "nat-gateway"
-  router = data.google_compute_router.existing_nat_router.name
+  router = data.google_compute_router.existing_nat_router.id
   region = "us-central1"
   project = var.project_id
 }
