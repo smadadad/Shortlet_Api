@@ -122,8 +122,8 @@ data "google_compute_router_nat" "existing_nat_gateway" {
 resource "google_compute_router_nat" "nat_gateway" {
   count = length(data.google_compute_router_nat.existing_nat_gateway.id) == 0 ? 1 : 0
   name = "nat-gateway"
-  router = google_compute_router.nat_router[0].name
-  region  = google_compute_router.nat_router[0].region
+  router = google_compute_router.nat_router.name
+  region  = google_compute_router.nat_router.region
   nat_ip_allocate_option = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
