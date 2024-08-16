@@ -48,14 +48,14 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
 }
 
 # Create a VPC
-resource "google_compute_network" "vpc_network3" {
-  name = "vpc-network3"
+resource "google_compute_network" "vpc_network" {
+  name = "vpc-network"
 }
 
 # Create a Subnetwork
 resource "google_compute_subnetwork" "timeapisubnet" {
   name          = "timeapisubnet"
-  network       = google_compute_network.vpc_network3.id
+  network       = google_compute_network.vpc_network.id
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
 }
@@ -76,7 +76,7 @@ resource "google_compute_firewall" "allow-internal" {
 # Create NAT Gateway
 resource "google_compute_router" "nat_router" {
   name    = "nat-router"
-  network = google_compute_network.vpc_network3.id
+  network = google_compute_network.vpc_network.id
   region  = "us-central1"
 }
 
