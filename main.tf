@@ -4,7 +4,7 @@ provider "google" {
   project     = var.project_id
   region      = "us-central1"
 }
-
+ 
 # Create a service account for GKE
 resource "google_service_account" "gke_service_account" {
   account_id   = "gke-cluster-sa"
