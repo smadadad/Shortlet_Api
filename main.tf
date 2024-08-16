@@ -47,10 +47,10 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
-# Create a VPC
-resource "google_compute_network" "vpc_network" {
-  name = "vpc-network"
-}
+# Create a VPC -------------uncomment----------------
+#resource "google_compute_network" "vpc_network" {
+#  name = "vpc-network"
+#}
 
 # Create a Subnetwork
 resource "google_compute_subnetwork" "timeapisubnet" {
