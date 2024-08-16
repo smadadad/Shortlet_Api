@@ -47,15 +47,19 @@ jobs:
 
       # Step 6: Plan Terraform changes
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -input=false -var="project_id=$PROJECT_ID" -var="gcp_credentials=$GCP_CREDENTIALS"
 
       # Step 7: Apply Terraform changes
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        # add a run job that connects to the cluster
+        run: terraform apply -auto-approve -var="project_id=$PROJECT_ID" -var="gcp_credentials=$GCP_CREDENTIALS"
     
-  build and deploy:
-    runs-on: ubuntu-latest
+
+        
+  build_deploy:
     needs: terraform
+    runs-on: ubuntu-latest
+
 
     steps:
       # Step 1: Checkout the repo
