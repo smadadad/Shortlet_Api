@@ -152,7 +152,7 @@ resource "kubernetes_service" "my_api_service" {
 # Kubernetes Ingress
 resource "kubernetes_ingress" "timeapi_ingress" {
   metadata {
-    name      = "timeapi_ingress"
+    name      = "timeapi-ingress"
     namespace = kubernetes_namespace.timeapi_ns.metadata[0].name
     annotations = {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/"
