@@ -49,10 +49,10 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
 
 
 
-# Check if the VPC network already exists
+# Data source to check for an existing VPC network
 data "google_compute_network" "existing_vpc_network" {
-  name = "vpc-network"
-  project = var.project_id
+  name    = "vpc-network"
+  project  = var.project_id
 }
 
 # Create a VPC network only if it doesn't exist
