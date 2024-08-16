@@ -51,7 +51,6 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
 data "google_compute_network" "existing_vpc_network" {
   name = "vpc-network"
   project = var.project_id
-  region = "us-central1"
 }
 
 # Create a VPC network only if it doesn't exist
@@ -77,13 +76,8 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 }
 
 
-# Check if the Firewall Rule already exists
-data "google_compute_firewall" "existing_firewall" {
-  name    = "allow-internal"
-  network = coalesce(data.google_compute_network.existing_vpc_network.name, google_compute_network.vpc_network[0].name)
-}
 
-# Create a Firewall Rule only if it doesn't exist
+# Create a Firewall Rule 
 resource "google_compute_firewall" "allow-internal" {
   count   = length(data.google_compute_firewall.existing_firewall.self_link) == 0 ? 1 : 0
   name    = "allow-internal"
@@ -166,7 +160,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
         container {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
-          ports{
+          port{
             container_port = 8080
 
           }
