@@ -63,7 +63,7 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 # Create a Firewall Rule to allow internal/secure communication
 resource "google_compute_firewall" "allow-internal" {
   name    = "allow-internal"
-  network = google_compute_network.vpc_network3.name
+  network = google_compute_network.vpc_network.name
 
   allow {
     protocol = "tcp"
@@ -89,9 +89,9 @@ resource "google_compute_router_nat" "nat_gateway" {
 }
 
 # Kubernetes Namespace
-resource "kubernetes_namespace" "k_namespace" {
+resource "kubernetes_namespace" "timeapi_ns" {
   metadata {
-    name = "knamespace"
+    name = "timeapi-namespace"
   }
 }
 
@@ -99,7 +99,7 @@ resource "kubernetes_namespace" "k_namespace" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.k_namespace.metadata[0].name
+    namespace = kubernetes_namespace.timeapi_ns.metadata.name
   }
 
   spec {
@@ -122,6 +122,10 @@ resource "kubernetes_deployment" "timeapi_deployment" {
         container {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
+
+          ports {
+            container_port = 8080
+          }
         }
       }
     }
@@ -132,7 +136,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 resource "kubernetes_service" "my_api_service" {
   metadata {
     name      = "my-api-service"
-    namespace = kubernetes_namespace.k_namespace.metadata[0].name
+    namespace = kubernetes_namespace.timeapi_ns.metadata[0].name
   }
 
   spec {
@@ -148,10 +152,13 @@ resource "kubernetes_service" "my_api_service" {
 }
 
 # Kubernetes Ingress
-resource "kubernetes_ingress" "timeapi-ingress" {
+resource "kubernetes_ingress" "timeapi_ingress" {
   metadata {
-    name      = "timeapi-ingress"
-    namespace = kubernetes_namespace.k_namespace.metadata[0].name
+    name      = "timeapi_ingress"
+    namespace = kubernetes_namespace.timeapi_ns.metadata[0].name
+    annotations = {
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+    }
   }
 
   spec {
@@ -165,6 +172,10 @@ resource "kubernetes_ingress" "timeapi-ingress" {
           }
         }
       }
+    }
+
+    tls {
+      secret_name = "timeapi-tls"
     }
   }
 }
