@@ -55,12 +55,7 @@ resource "google_compute_network" "vpc_network" {
   name  = "vpc-network"
 }
 
-# Data source to check for an existing Subnetwork
-data "google_compute_subnetwork" "existing_subnet" {
-  name    = "timeapisubnet"
-  region  = "us-central1"
-  project = var.project_id
-}
+
 
 # Create a Subnetwork only if it doesn't exist
 resource "google_compute_subnetwork" "timeapisubnet" {
