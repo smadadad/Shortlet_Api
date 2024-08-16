@@ -47,23 +47,47 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
-# Create a VPC -------------uncomment----------------
-#resource "google_compute_network" "vpc_network" {
-#  name = "vpc-network"
-#}
+# Check if the VPC network already exists
+data "google_compute_network" "existing_vpc_network" {
+  name = "vpc-network"
+  project = var.project_id
+  region = "us-central1"
+}
 
-# Create a Subnetwork
+# Create a VPC network only if it doesn't exist
+resource "google_compute_network" "vpc_network" {
+  count = length(data.google_compute_network.existing_vpc_network.self_link) == 0 ? 1 : 0
+  name  = "vpc-network"
+}
+
+# Check if the Subnetwork already exists
+data "google_compute_subnetwork" "existing_subnet" {
+  name    = "timeapisubnet"
+  network = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
+  region  = "us-central1"
+}
+
+# Create a Subnetwork only if it doesn't exist
 resource "google_compute_subnetwork" "timeapisubnet" {
+  count         = length(data.google_compute_subnetwork.existing_subnet.self_link) == 0 ? 1 : 0
   name          = "timeapisubnet"
-  network       = google_compute_network.vpc_network.id
+  network       = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
 }
 
-# Create a Firewall Rule to allow internal/secure communication
-resource "google_compute_firewall" "allow-internal" {
+
+# Check if the Firewall Rule already exists
+data "google_compute_firewall" "existing_firewall" {
   name    = "allow-internal"
-  network = google_compute_network.vpc_network.name
+  network = coalesce(data.google_compute_network.existing_vpc_network.name, google_compute_network.vpc_network[0].name)
+}
+
+# Create a Firewall Rule only if it doesn't exist
+resource "google_compute_firewall" "allow-internal" {
+  count   = length(data.google_compute_firewall.existing_firewall.self_link) == 0 ? 1 : 0
+  name    = "allow-internal"
+  network = coalesce(data.google_compute_network.existing_vpc_network.name, google_compute_network.vpc_network[0].name)
 
   allow {
     protocol = "tcp"
@@ -73,20 +97,40 @@ resource "google_compute_firewall" "allow-internal" {
   source_ranges = ["10.0.0.0/16"]
 }
 
-# Create NAT Gateway
-resource "google_compute_router" "nat_router" {
+# Check if the NAT Router already exists
+data "google_compute_router" "existing_nat_router" {
   name    = "nat-router"
-  network = google_compute_network.vpc_network.id
+  network = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
   region  = "us-central1"
 }
 
+# Create a NAT Router only if it doesn't exist
+resource "google_compute_router" "nat_router" {
+  count   = length(data.google_compute_router.existing_nat_router.self_link) == 0 ? 1 : 0
+  name    = "nat-router"
+  network = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
+  region  = "us-central1"
+}
+
+# Check if the NAT Gateway already exists
+data "google_compute_router_nat" "existing_nat_gateway" {
+  name   = "nat-gateway"
+  router = coalesce(data.google_compute_router.existing_nat_router.name, google_compute_router.nat_router[0].name)
+  region = "us-central1"
+}
+
+# Create a NAT Gateway only if it doesn't exist
 resource "google_compute_router_nat" "nat_gateway" {
+  count                              = length(data.google_compute_router_nat.existing_nat_gateway.self_link) == 0 ? 1 : 0
   name                               = "nat-gateway"
-  router                             = google_compute_router.nat_router.name
-  region                             = google_compute_router.nat_router.region
+  router                             = google_compute_router.nat_router[0].name
+  region                             = google_compute_router.nat_router[0].region
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
+
+
+
 
 # Kubernetes Namespace
 resource "kubernetes_namespace" "timeapi_ns" {
@@ -122,6 +166,10 @@ resource "kubernetes_deployment" "timeapi_deployment" {
         container {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
+          ports{
+            container_port = 8080
+
+          }
 
           }
         }
