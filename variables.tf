@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "time-api-1"
+  description = "time-api-2"
   type        = string
 }
 
