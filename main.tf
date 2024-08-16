@@ -2,7 +2,7 @@
 # Google Provider Configuration
 provider "google" {
   credentials = var.gcp_credentials
-    project     = var.project_id
+  project     = var.project_id
   region      = "us-central1"
 }
 
