@@ -105,7 +105,6 @@ data "google_compute_router" "existing_nat_router" {
   name    = "nat-router"
   region  = "us-central1"
   project = var.project_id
-  region   = "us-central1"
 }
 
 # Create a NAT Router only if it doesn't exist
@@ -122,7 +121,6 @@ data "google_compute_router_nat" "existing_nat_gateway" {
   router = data.google_compute_router.existing_nat_router.name
   region = "us-central1"
   project = var.project_id
-  region   = "us-central1"
 }
 
 # Create a NAT Gateway , only if the VPC network is created
