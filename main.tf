@@ -106,12 +106,14 @@ data "google_compute_router" "existing_nat_router" {
   name    = "nat-router"
   region  = "us-central1"
   project = var.project_id
+  network = google_compute_network.vpc_network[0].id
 }
 
 # Check if the NAT Gateway already exists
 data "google_compute_router_nat" "existing_nat_gateway" {
   name   = "nat-gateway"
   region = "us-central1"
+  router = data.google_compute_router.existing_nat_router.name
   project = var.project_id
 }
 
