@@ -128,7 +128,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
       }
     }
   }
-}
+
 
 # Kubernetes Service
 resource "kubernetes_service" "my_api_service" {
