@@ -66,7 +66,6 @@ resource "google_compute_network" "vpc_network" {
 data "google_compute_subnetwork" "existing_subnet" {
   name    = "timeapisubnet"
   region  = "us-central1"
-  network = data.google_compute_network.existing_vpc_network.id
   project = var.project_id
 }
 # Create a Subnetwork 
@@ -80,15 +79,8 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 
 
 
-# Check if the Firewall Rule already exists
-data "google_compute_firewall" "existing_firewall" {
-  name    = "allow-internal"
-  project = var.project_id
-}
-
 # Create a Firewall Rule 
 resource "google_compute_firewall" "allow-internal" {
-  count   = length(data.google_compute_firewall.existing_firewall.id) == 0 ? 1 : 0
   name    = "allow-internal"
   network = google_compute_network.vpc_network[0].id
 
