@@ -160,8 +160,7 @@ resource "kubernetes_service" "my_api_service" {
 data "google_client_config" "default" {}
 
 
-
-# Kubernetes Ingress and specify the version number
+# Kubernetes Ingress
 resource "kubernetes_ingress_v1" "timeapi_ingress" {
   metadata {
     name      = "timeapi-ingress"
@@ -176,10 +175,14 @@ resource "kubernetes_ingress_v1" "timeapi_ingress" {
       http {
         path {
           path = "/time"
-          path_type = "prefix" 
+          path_type = "Prefix"  # This is required in kubernetes_ingress_v1
           backend {
-            service_name = kubernetes_service.my_api_service.metadata[0].name
-            service_port = 80
+            service {
+              name = kubernetes_service.my_api_service.metadata[0].name
+              port {
+                number = 80
+              }
+            }
           }
         }
       }
@@ -190,3 +193,4 @@ resource "kubernetes_ingress_v1" "timeapi_ingress" {
     }
   }
 }
+
