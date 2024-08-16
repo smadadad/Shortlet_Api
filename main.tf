@@ -22,7 +22,7 @@ resource "google_container_cluster" "timeapi_cluster1" {
   node_config {
     machine_type = "e2-medium"
 
-    disk_size_gb = 75 # This will set to 10 instead of 100
+    disk_size_gb = 75 
     service_account = google_service_account.gke_service_account.email
   }
 }
@@ -67,7 +67,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_subnetwork" "timeapisubnet" {
   count         = length(data.google_compute_subnetwork.existing_subnet.id) == 0 ? 1 : 0
   name          = "timeapisubnet"
-  network       = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
+  network       = google_compute_network.vpc_network[0].id
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
 }
@@ -76,7 +76,7 @@ resource "google_compute_subnetwork" "timeapisubnet" {
 
 # Create a Firewall Rule 
 resource "google_compute_firewall" "allow-internal" {
-  count   = length(data.google_compute_firewall.existing_firewall.self_link) == 0 ? 1 : 0
+  count   = length(data.google_compute_firewall.existing_firewall.id) == 0 ? 1 : 0
   name    = "allow-internal"
   network = google_compute_network.vpc_network[0].id
 
@@ -91,8 +91,8 @@ resource "google_compute_firewall" "allow-internal" {
 # Check if the NAT Router already exists
 data "google_compute_router" "existing_nat_router" {
   name    = "nat-router"
-  network = coalesce(data.google_compute_network.existing_vpc_network.self_link, google_compute_network.vpc_network[0].self_link)
   region  = "us-central1"
+  project = var.project_id
 }
 
 # Create a NAT Router only if it doesn't exist
@@ -108,11 +108,12 @@ data "google_compute_router_nat" "existing_nat_gateway" {
   name   = "nat-gateway"
   router = data.google_compute_router.existing_nat_router.name
   region = "us-central1"
+  project = var.project_id
 }
 
 # Create a NAT Gateway , only if the VPC network is created
 resource "google_compute_router_nat" "nat_gateway" {
-  count = length(data.google_compute_router_nat.existing_nat_gateway.self_link) == 0 ? 1 : 0
+  count = length(data.google_compute_router_nat.existing_nat_gateway.id) == 0 ? 1 : 0
   name = "nat-gateway"
   router = google_compute_router.nat_router[0].name
   region  = google_compute_router.nat_router[0].region
