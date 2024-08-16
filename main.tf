@@ -1,16 +1,4 @@
 # TERRAFORM FILE TO CONFIGURE A GCP
-
-# specifies kub8 version
-terraform {
-  required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.11" 
-    }
-  }
-}
-
-
 # Google Provider Configuration
 provider "google" {
   credentials = var.gcp_credentials
