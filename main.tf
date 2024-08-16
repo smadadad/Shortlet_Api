@@ -99,7 +99,7 @@ resource "kubernetes_namespace" "timeapi_ns" {
 resource "kubernetes_deployment" "timeapi_deployment" {
   metadata {
     name      = "timeapi-deployment"
-    namespace = kubernetes_namespace.timeapi_ns.metadata.name
+    namespace = kubernetes_namespace.timeapi_ns.metadata[0].name
   }
 
   spec {
