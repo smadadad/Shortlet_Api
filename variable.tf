@@ -1,11 +1,5 @@
-variable "gcp_credentials" {
-  description = "The path to the GCP credentials JSON file"
-  type        = string
-}
-
-
 variable "project_id" {
-  description = "time-api-1"
+  description = "time-api-2"
   type        = string
 }
 
@@ -14,4 +8,7 @@ variable "region" {
   default     = "us-central1"
 }
 
-
+variable "gcp_credentials" {
+  description = "The JSON credentials for GCP Creds"
+  type        = string
+}
