@@ -123,8 +123,6 @@ resource "kubernetes_deployment" "timeapi_deployment" {
           image = "gcr.io/${var.project_id}/timeapi:latest"
           name  = "time_api_container"
 
-          ports {
-            container_port = 8080
           }
         }
       }
