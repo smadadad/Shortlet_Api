@@ -36,17 +36,20 @@ resource "google_project_iam_member" "gke_cluster_admin" {
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
+
 resource "google_project_iam_member" "gke_compute_admin" {
  project = var.project_id
   role    = "roles/compute.admin"
  member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
 
+
 resource "google_project_iam_member" "gke_iam_service_account_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
+
 
 # Create a VPC
 resource "google_compute_network" "vpc_network" {
@@ -61,6 +64,7 @@ resource "google_compute_subnetwork" "timeapisubnet" {
   region        = "us-central1"
 }
 
+
 # Create a Firewall Rule to allow internal/secure communication
 resource "google_compute_firewall" "allow-internal" {
   name    = "allow-internal"
@@ -74,12 +78,14 @@ resource "google_compute_firewall" "allow-internal" {
   source_ranges = ["10.0.0.0/16"]
 }
 
+
 # Create NAT Gateway
 resource "google_compute_router" "nat_router" {
   name    = "nat-router"
   network = google_compute_network.vpc_network.id
   region  = "us-central1"
 }
+
 
 resource "google_compute_router_nat" "nat_gateway" {
   name                               = "nat-gateway"
@@ -97,6 +103,7 @@ resource "kubernetes_namespace" "timeapi_ns" {
     name = "timeapi-namespace"
   }
 }
+
 
 # Kubernetes Deployment
 resource "kubernetes_deployment" "timeapi_deployment" {
@@ -123,7 +130,7 @@ resource "kubernetes_deployment" "timeapi_deployment" {
 
       spec {
         container {
-          image = "gcr.io/${var.project_id}/timeapi:latest"
+          image = "nginx:alpine"
           name  = "time-api-container" #only allows"-"
 
           }
@@ -151,6 +158,7 @@ resource "kubernetes_service" "my_api_service" {
     }
   }
 }
+
 
 # kubernetes provider config to connect to created cluster
   provider "kubernetes" { 
