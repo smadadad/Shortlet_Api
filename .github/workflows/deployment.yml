@@ -59,6 +59,7 @@ jobs:
   build_deploy:
     needs: terraform
     runs-on: ubuntu-latest
+    environment: production
 
 
     steps:
