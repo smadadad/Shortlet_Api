@@ -25,6 +25,8 @@ resource "google_container_cluster" "timeapi_cluster1" {
 
     disk_size_gb = 75
     service_account = google_service_account.gke_service_account.email
+    network = google_compute_network.vpc_network.name
+    subnetwork = google_compute_subnetwork.timeapisubnet.name
   }
 }
 
