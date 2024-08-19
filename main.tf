@@ -49,7 +49,18 @@ resource "google_project_iam_member" "gke_iam_service_account_user" {
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.gke_service_account.email}"
 }
+# Assign IAM roles to the service account
+resource "google_project_iam_member" "service_account_admin" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountAdmin"
+  member  = "serviceAccount:${google_service_account.gke_service_account.email}"
+}
 
+resource "google_project_iam_member" "service_account_key_admin" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountKeyAdmin"
+  member  = "serviceAccount:${google_service_account.gke_service_account.email}"
+}
 
 # Create a VPC
 resource "google_compute_network" "vpc_network" {
