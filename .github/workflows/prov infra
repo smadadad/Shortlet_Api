@@ -2,7 +2,7 @@ name: Provision GCP Infrastructure
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}        
