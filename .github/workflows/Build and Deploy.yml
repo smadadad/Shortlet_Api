@@ -31,13 +31,9 @@ jobs:
           location: ${{ secrets.GKE_ZONE }}
           project_id: ${{ secrets.GKE_PROJECT }}
 
-      - name: Remove existing containerd
-        run: sudo apt-get remove -y containerd
 
-      - name: Set up Docker
-        run: |-
-          sudo apt-get update
-          sudo apt-get install -y docker.io
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
         run: |-
