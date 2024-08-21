@@ -40,6 +40,12 @@ resource "google_project_iam_member" "gke_cluster_admin" {
 }
 
 
+resource "google_service_account_key" "gke_sa_key" {
+  service_account_id = google_service_account.gke_service_account.name
+  private_key_type   = "TYPE_GOOGLE_CREDENTIALS_FILE"
+}
+
+
 resource "google_project_iam_member" "gke_compute_admin" {
  project = var.project_id
   role    = "roles/compute.admin"
