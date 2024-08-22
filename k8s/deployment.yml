@@ -57,7 +57,4 @@ spec:
             name: my-api-service
             port:
               number: 80
-  tls:
-  - hosts:
-    - <YOUR_DOMAIN>
-    secretName: timeapi-tls
+
