@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: time-api-container
-        image: gcr.io/time-api-2/timeapi:latest
+        image: timeapi:latest
         ports:
         - containerPort: 8080
 
