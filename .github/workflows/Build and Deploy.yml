@@ -41,8 +41,8 @@ jobs:
 
       - name: Deploy to GKE
         run: |-
-              kubectl set image deployment/$DEPLOYMENT_NAME time-api-container=timeapi:latest
-              kubectl rollout status deployment/$DEPLOYMENT_NAME --namespace=timeapi-namespace
+              kubectl set image Deployment/${{ secrets.DEPLOYMENT_NAME }} time-api-container=timeapi:latest
+              kubectl rollout status Deployment/${{ secrets.DEPLOYMENT_NAME }} --namespace=timeapi-namespace
 
       - name: Verify API Endpoint
         run: |
