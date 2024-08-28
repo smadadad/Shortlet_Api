@@ -19,7 +19,7 @@ spec:
       - name: artifact-registry-creds
       containers:
       - name: time-api-container
-        image: us-central1-docker.pkg.dev/time-api-2/my-docker-repo/timeapi:latest
+        image: nginx:alpine
         ports:
         - containerPort: 8080
 
