@@ -55,7 +55,6 @@ jobs:
       - name: Deploy to GKE
         run: |
            kubectl apply -f k8s/deployment.yml
-           kubectl set image Deployment/${{ secrets.DEPLOYMENT_NAME }} time-api-container=${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest
            kubectl rollout status Deployment/${{ secrets.DEPLOYMENT_NAME }} --namespace=timeapi-namespace
 
           
