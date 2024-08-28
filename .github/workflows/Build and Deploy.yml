@@ -9,6 +9,8 @@ env:
   GKE_ZONE: ${{ secrets.GKE_ZONE }}             # Zone of the GKE cluster stored in GitHub Secrets
   DEPLOYMENT_NAME: ${{ secrets.DEPLOYMENT_NAME }} # Name of the Kubernetes Deployment stored in GitHub Secrets
   GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }} # GCP credentials stored in GitHub Secrets
+  REPO_NAME: my-docker-repo  # Name of your Artifact Registry repository
+  IMAGE_NAME: timeapi  # Name of your Docker image
 
 jobs:
   build_deploy:
@@ -38,27 +40,27 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Configure Docker to use Artifact Registry
+        run: gcloud auth configure-docker "${{ secrets.GKE_ZONE }}-docker.pkg.dev"
+
       # Step 5: Build the Docker image
       - name: Build Docker image
         run: |
           docker build -t timeapi:latest .
+          docker build -t ${{ secrets.GKE_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest .
+          docker push ${{ secrets.GKE_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest
 
-      # Step 6: Apply the Kubernetes deployment configuration
-      - name: Apply Kubernetes Deployment
-        run: |
-          # Ensure the Kubernetes namespace exists
-          kubectl create namespace timeapi-namespace --dry-run=client -o yaml | kubectl apply -f -
 
-          # Apply the deployment file to create/update resources
-          kubectl apply -f k8s/deployment.yml
-          
-      # Step 7: Update the deployment image to the latest built image
+
+       # Step 6: Apply the deployment file to create/update resources and deploy to GKE
       - name: Deploy to GKE
         run: |
-          kubectl set image Deployment/${{ secrets.DEPLOYMENT_NAME }} time-api-container=timeapi:latest
-          kubectl rollout status Deployment/${{ secrets.DEPLOYMENT_NAME }} --namespace=timeapi-namespace
+           kubectl apply -f k8s/deployment.yml
+           kubectl set image Deployment/${{ secrets.DEPLOYMENT_NAME }} time-api-container=${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest
+           kubectl rollout status Deployment/${{ secrets.DEPLOYMENT_NAME }} --namespace=timeapi-namespace
 
-      # Step 8: Verify API Endpoint
+          
+      # Step 7: Verify API Endpoint
       - name: Verify API Endpoint
         run: |
           wait_for_ip() {
