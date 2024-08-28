@@ -46,7 +46,6 @@ jobs:
       # Step 5: Build the Docker image
       - name: Build Docker image
         run: |
-          docker build -t timeapi:latest .
           docker build -t ${{ secrets.GKE_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest .
           docker push ${{ secrets.GKE_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/$REPO_NAME/$IMAGE_NAME:latest
 
