@@ -50,7 +50,7 @@ jobs:
           kubectl create namespace timeapi-namespace --dry-run=client -o yaml | kubectl apply -f -
 
           # Apply the deployment file to create/update resources
-          kubectl apply -f timeapi-deployment.yml
+          kubectl apply -f deployment.yml
 
       # Step 7: Update the deployment image to the latest built image
       - name: Deploy to GKE
