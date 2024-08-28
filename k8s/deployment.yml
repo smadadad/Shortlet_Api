@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: time-api-container
-        image: timeapi:latest
+        image: us-central1-docker.pkg.dev/tme-api-2/my-docker-repo/timeapi:latest
         ports:
         - containerPort: 8080
 
