@@ -55,7 +55,6 @@ jobs:
       - name: Deploy to GKE
         run: |
            kubectl apply -f k8s/deployment.yml
-           kubectl set image Deployment/${{ secrets.DEPLOYMENT_NAME }} time-api-container=us-central1-docker.pkg.dev/time-api-2/my-docker-repo/timeapi:latest
            kubectl rollout status Deployment/${{ secrets.DEPLOYMENT_NAME }} --namespace=timeapi-namespace
           
       # Step 7: Verify API Endpoint
