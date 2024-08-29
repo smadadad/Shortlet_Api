@@ -65,9 +65,10 @@ jobs:
             local timeout=$2
             local interval=5
             local elapsed=0
+            local namespace="timeapi-namespace"  # Specify the namespace here
 
             while [ $elapsed -lt $timeout ]; do
-              EXTERNAL_IP=$(kubectl get svc $service_name -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+              EXTERNAL_IP=$(kubectl get svc $service_name --namespace=$namespace -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
               if [ -n "$EXTERNAL_IP" ]; then
                 echo "Service External IP: $EXTERNAL_IP"
                 return 0
