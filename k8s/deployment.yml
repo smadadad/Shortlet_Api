@@ -15,13 +15,13 @@ spec:
       labels:
         app: my-api
     spec:
-      imagePullSecrets:
-      - name: artifact-registry-creds
       containers:
       - name: time-api-container
-        image: nginx:alpine
+        image: us-central1-docker.pkg.dev/time-api-2/my-docker-repo/timeapi:latest
         ports:
         - containerPort: 8080
+      imagePullSecrets:
+      - name: artifact-registry-creds
 
 ---
 
